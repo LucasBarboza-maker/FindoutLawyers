@@ -1,0 +1,54 @@
+{
+	"id": "cs_test_a1Hgw0jGo0cE0PcL76ZaAnAQqIPX7ffbCQtoKGHwivCkpYzu0kSrHJtOB4",
+	"object": "checkout.session",
+	"after_expiration": null,
+	"allow_promotion_codes": null,
+	"amount_subtotal": 0,
+	"amount_total": 0,
+	"automatic_tax": {
+		"enabled": false,
+		"status": null
+	},
+	"billing_address_collection": null,
+	"cancel_url": "http://localhost:3000/checkout/error",
+	"client_reference_id": null,
+	"consent": null,
+	"consent_collection": null,
+	"currency": "brl",
+	"customer": "cus_KZtv2SciylMXx1",
+	"customer_details": {
+		"email": "vorlefan@outlook.com",
+		"phone": null,
+		"tax_exempt": "none",
+		"tax_ids": []
+	},
+	"customer_email": null,
+	"expires_at": 1636749824,
+	"livemode": false,
+	"locale": null,
+	"metadata": {},
+	"mode": "subscription",
+	"payment_intent": null,
+	"payment_method_options": {},
+	"payment_method_types": [
+		"card"
+	],
+	"payment_status": "paid",
+	"phone_number_collection": {
+		"enabled": false
+	},
+	"recovered_from": null,
+	"setup_intent": "seti_1Juk7tK4UaRll8Q0jiUtEfFF",
+	"shipping": null,
+	"shipping_address_collection": null,
+	"status": "complete",
+	"submit_type": null,
+	"subscription": "sub_1Juk7vK4UaRll8Q0FF8gyB08",
+	"success_url": "http://localhost:3000/checkout/success?session_id={CHECKOUT_SESSION_ID}",
+	"total_details": {
+		"amount_discount": 0,
+		"amount_shipping": 0,
+		"amount_tax": 0
+	},
+	"url": null
+}

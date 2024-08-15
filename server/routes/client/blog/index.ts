@@ -1,0 +1,11 @@
+export { RouteClient_Blog_Blogs } from './blogs'
+export { RouteClient_News_Read } from './read'
+export { RouteClient_Blog_Actions } from './actions'
+
+export { RouteClient_BlogUser_Create } from './user/user.create'
+export { RouteClient_BlogUser_Delete } from './user/user.delete'
+export { RouteClient_BlogUser_Blogs } from './user/user.blogs'
+export { RouteClient_BlogUser_Edit } from './user/user.edit'
+export { RouteClient_BlogUser_EditCover } from './user/user.edit.cover'
+export { RouteClient_NewsUser_Read } from './user/user.read'
+export { RouteClient_BlogUser_Actions } from './user/user.actions'

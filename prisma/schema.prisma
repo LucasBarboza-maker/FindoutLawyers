@@ -1,0 +1,671 @@
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// | Generator
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// | User
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+enum UserRole {
+  ADMIN
+  LAWYER
+  CLIENT
+}
+
+enum UserWorkFields {
+  FAMILY
+  ENTERPRISE
+  CIVIL
+  INTELLECTUAL_PROPERTY
+  MORAL_AND_MATERIAL_DAMAGE
+  DIGITAL
+  CITIZENSHIP_IMMIGRATION
+  MEDICAL
+  REAL_ESTATE
+  WELFARE
+  CRIMINAL
+  TRIBUTARY
+  SPORTS_LAW
+  CONSUMER
+  WORKER
+  MEDIATION_ARBITRATION
+  IMPORT_EXPORT
+  ADMIN
+  ADMIN_NOTARIES
+  ADMIN_DOCUMENTS
+  BIDDING
+  FINE_RESOURCES
+  MARITIME
+  EXTRADITION_ASYLUM
+  MILITAR
+  ENVIRONMENTAL
+  OTHERS
+}
+
+enum UserCategory {
+  STAFF
+  COMMON
+  PREMIUM
+}
+
+// ------------------------------------------------------------------------------------
+// | User
+// ------------------------------------------------------------------------------------
+
+model User {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  email           String  @unique
+  password        String
+  name            String
+  surname         String
+  imageCover      String  @default("public/uploads/users/cover/default.png")
+  imageBackground String?
+
+  // ---------------------------------------------------------------------------------
+  // | Page fields
+  // ---------------------------------------------------------------------------------
+
+  contactEmail          String           @default("")
+  contactWebsite        String           @default("")
+  contactCity           String           @default("")
+  contactState          String           @default("")
+  contactCountry        String           @default("")
+  contactCellphone      String           @default("")
+  resume                String           @default("")
+  description           String           @default("")
+  workFields            UserWorkFields[]
+  highlightedWorkFields UserWorkFields[]
+  lawyerCardFront       String?
+  lawyerCardBack        String?
+  lawyerOrdemUrl        String?
+  lawyerSubscriptionId  String           @default("")
+  searchable            String[]
+  search                String           @default("")
+  isPromotedToBanner    Boolean          @default(false)
+  isPromotedToSearch    Boolean          @default(false)
+  premiumSubId          String           @default("")
+  detachSubId           String           @default("")
+
+  // ---------------------------------------------------------------------------------
+  // | Access fields
+  // ---------------------------------------------------------------------------------
+
+  role                         UserRole     @default(CLIENT)
+  isRequestingToAccess         Boolean      @default(true)
+  isBlockedToAccess            Boolean      @default(false)
+  isRequestingToDefinePassword Boolean      @default(true)
+  category                     UserCategory @default(COMMON)
+  isChecked                    Boolean      @default(false)
+  stripeCustomerId             String?
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+  settings         UserSettings?      @relation(fields: [userSettingsId], references: [id])
+  userSettingsId   String?
+  evaluation       UserEvaluation?    @relation(fields: [userEvaluationId], references: [id])
+  userEvaluationId String?
+  UserEvaluations  UserEvaluations[]
+  reports          UserReports[]
+  blogs            BlogTopic[]
+  BlogTopicActions BlogTopicActions[]
+  BlogTopicReplies BlogTopicReplies[]
+  payaments        UserPayaments?     @relation(fields: [userPayamentsId], references: [id])
+  userPayamentsId  String?
+}
+
+// ------------------------------------------------------------------------------------
+// | UserPayaments
+// ------------------------------------------------------------------------------------
+
+enum UserPayamentsCategory {
+  NONE
+  MONTHLY
+  QUARTERLY
+  SEMESTERLY
+  ANNUALLY
+}
+
+model UserPayaments {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  isActive           Boolean               @default(false) // set it to true when is paid
+  stripeCustomerId   String?
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  cancelAt           DateTime?
+  canceledAt         DateTime?
+  created            DateTime?
+  endedAt            DateTime?
+  metadata           String                @default("")
+  status             String                @default("")
+  category           UserPayamentsCategory @default(NONE)
+  billingAdress      String                @default("")
+  payamentMethod     String                @default("")
+  currency           String                @default("")
+  productId          String                @default("")
+  description        String                @default("")
+  unitAmount         Float                 @default(0)
+  interval           Int?
+  intervalCount      Int?
+  cardBrand          String                @default("")
+  cardLast4          String                @default("")
+  cardCountry        String                @default("")
+
+
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+  User User[]
+}
+
+// ------------------------------------------------------------------------------------
+// | UserReports
+// ------------------------------------------------------------------------------------
+
+model UserReports {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  fullname    String
+  location    String
+  email       String
+  description String
+  markAsRead  Boolean @default(false)
+  isChecked   Boolean @default(false)
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+  User   User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
+// ------------------------------------------------------------------------------------
+// | UserEvaluation
+// ------------------------------------------------------------------------------------
+
+model UserEvaluation {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  average Float @default(-1)
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+  User        User[]
+  evaluations UserEvaluations[]
+}
+
+// ------------------------------------------------------------------------------------
+// | UserRate
+// ------------------------------------------------------------------------------------
+
+model UserEvaluations {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  note        Float   @default(5)
+  description String  @default("")
+  isChecked   Boolean @default(false)
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+  user             User?           @relation(fields: [userId], references: [id])
+  userId           String?
+  UserEvaluation   UserEvaluation? @relation(fields: [userEvaluationId], references: [id])
+  userEvaluationId String?
+}
+
+// ------------------------------------------------------------------------------------
+// | UserSettings
+// ------------------------------------------------------------------------------------
+
+model UserSettings {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+
+  User User[]
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// | News
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+model News {
+
+  // ---------------------------------------------------------------------------------
+  // | Auto generated
+  // ---------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ---------------------------------------------------------------------------------
+  // | General Fields
+  // ---------------------------------------------------------------------------------
+
+  title       String
+  thumbnail   String?
+  description String
+  source      String
+  link        String
+
+  // ---------------------------------------------------------------------------------
+  // | Relationships
+  // ---------------------------------------------------------------------------------
+
+
+
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// | Blog
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// ------------------------------------------------------------------------------------
+// | BlogTopic
+// ------------------------------------------------------------------------------------
+
+model BlogTopic {
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  title        String
+  rawMessage   String
+  message      String
+  tags         String[]
+  imageCover   String?
+  description  String
+  totalReplies Int      @default(0)
+  totalLikes   Int      @default(0)
+  isBlocked    Boolean  @default(false)
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+  replies BlogTopicReplies[]
+  actions BlogTopicActions[]
+  User    User?              @relation(fields: [userId], references: [id])
+  userId  String?
+}
+
+// ------------------------------------------------------------------------------------
+// | BlogTopicActions
+// ------------------------------------------------------------------------------------
+
+enum BlogTopicActionCategory {
+  NONE
+  LIKE
+  DISLIKE
+}
+
+model BlogTopicActions {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  category BlogTopicActionCategory @default(NONE)
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+  BlogTopic   BlogTopic? @relation(fields: [blogTopicId], references: [id])
+  blogTopicId String?
+  User        User?      @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+// ------------------------------------------------------------------------------------
+// | BlogTopicReplies
+// ------------------------------------------------------------------------------------
+
+model BlogTopicReplies {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  message    String
+  rawMessage String
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+  BlogTopic   BlogTopic? @relation(fields: [blogTopicId], references: [id])
+  blogTopicId String?
+  User        User?      @relation(fields: [userId], references: [id])
+  userId      String?
+}
+
+// ------------------------------------------------------------------------------------
+// | Banners
+// ------------------------------------------------------------------------------------
+
+enum BannersPage {
+  HOME_A
+  HOME_B
+  SEARCH_A
+  SEARCH_B
+  PUBLIC_PROFILE
+  NEWS
+}
+
+model Banners {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  page        BannersPage @unique @default(HOME_A)
+  filepath    String?
+  name        String      @default("")
+  description String      @default("")
+  isVisible   Boolean     @default(false)
+  link        String      @default("")
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+}
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// | Banners
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// | GlobalTaskQueue
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+// ------------------------------------------------------------------------------------
+// | GlobalTasksQueue
+// ------------------------------------------------------------------------------------
+
+enum GlobalTasksQueueId {
+  PARALLEL
+  UNIT
+}
+
+model GlobalTasksQueue {
+
+  // ----------------------------------------------------------------------------------
+  // | Auto Generated
+  // ----------------------------------------------------------------------------------
+
+  id        String   @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  key GlobalTasksQueueId @unique @default(UNIT)
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+  tasks GlobalTasks[]
+}
+
+// ------------------------------------------------------------------------------------
+// | GlobalTasks
+// ------------------------------------------------------------------------------------
+
+model GlobalTasks {
+
+  // ----------------------------------------------------------------------------------
+  // | Auto Generated
+  // ----------------------------------------------------------------------------------
+
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  key String @unique
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+  jobs GlobalTasksJobs[]
+
+  GlobalTasksQueue   GlobalTasksQueue?   @relation(fields: [globalTasksQueueId], references: [key])
+  globalTasksQueueId GlobalTasksQueueId?
+}
+
+// ------------------------------------------------------------------------------------
+// | GlobalTasksJobs
+// ------------------------------------------------------------------------------------
+
+enum GlobalTasksJobsCategory {
+  COMPLETED
+  ERROR
+  RUNNING
+  STOPPED
+  INERTIA
+}
+
+model GlobalTasksJobs {
+
+  // ----------------------------------------------------------------------------------
+  // | Auto Generated
+  // ----------------------------------------------------------------------------------
+
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  category GlobalTasksJobsCategory @default(INERTIA)
+  priority Int                     @default(0)
+  redisKey String                  @default(uuid())
+  data     String                  @default("{}")
+
+
+  // ----------------------------------------------------------------------------------
+  // | Relations
+  // ----------------------------------------------------------------------------------
+
+
+  GlobalTasks   GlobalTasks? @relation(fields: [globalTasksId], references: [key])
+  globalTasksId String?
+
+  GlobalTasksJobsPerformance   GlobalTasksJobsPerformance? @relation(fields: [globalTasksJobsPerformanceId], references: [id])
+  globalTasksJobsPerformanceId Int?
+  GlobalTasksJobsLog           GlobalTasksJobsLog?         @relation(fields: [globalTasksJobsLogId], references: [id])
+  globalTasksJobsLogId         Int?
+}
+
+// ------------------------------------------------------------------------------------
+// | GlobalTasksJobsLog
+// ------------------------------------------------------------------------------------
+
+model GlobalTasksJobsLog {
+
+  // ----------------------------------------------------------------------------------
+  // | Auto Generated
+  // ----------------------------------------------------------------------------------
+
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+  code       String
+  message    String
+  isCritical Boolean @default(false)
+
+  // ----------------------------------------------------------------------------------
+  // | Relationship
+  // ----------------------------------------------------------------------------------
+
+  GlobalTasksJobs GlobalTasksJobs[]
+}
+
+// ------------------------------------------------------------------------------------
+// | GlobalTasksJobsPerformance
+// ------------------------------------------------------------------------------------
+
+model GlobalTasksJobsPerformance {
+
+  // ----------------------------------------------------------------------------------
+  // | Auto Generated
+  // ----------------------------------------------------------------------------------
+
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  // ----------------------------------------------------------------------------------
+  // | Core
+  // ----------------------------------------------------------------------------------
+
+
+  timeStart      DateTime
+  timeEnd        DateTime
+  timeDelta      Float
+  secondsElapsed Float
+
+  memoryStart Float
+  memoryEnd   Float
+  memoryDelta Float
+
+  // ----------------------------------------------------------------------------------
+  // | Relationship
+  // ----------------------------------------------------------------------------------
+
+  GlobalTasksJobs GlobalTasksJobs[]
+}
